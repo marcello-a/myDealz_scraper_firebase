@@ -4,6 +4,9 @@ builded a webscraper for mydealz.
 # How to
 
 ## Test Firebase
+> Node version 16 required
+
+
 Check  for key Project > Settings > Service Account > Neuen privaten Schlüssel
 https://firebase.google.com/docs/functions/local-emulator?hl=de
 - export GOOGLE_APPLICATION_CREDENTIALS="path/to/key.json"
@@ -16,7 +19,7 @@ https://firebase.google.com/docs/functions/local-emulator?hl=de
     //   .onRun(async (context: any) => {`
 
 ### In shell
-1. Go to function folder
+1. Go to function folder `cd functions`
 2. Run `npm run shell`
 3. Execute function e.g. `myDealzScraper({data: {}})`
 
@@ -25,6 +28,8 @@ https://firebase.google.com/docs/functions/local-emulator?hl=de
 - das programm scraped gleiche deal gruppen nur einmal und sendet sie an alle user
 
 # Todo
+## READ and UNDERSTAND
+- [ ] https://medium.com/@r_dev/using-pub-sub-in-firebase-emulator-3d4b897d2441
 ## BUGS
 - [x] Deal (Link) is not working
 

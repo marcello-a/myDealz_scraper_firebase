@@ -7,6 +7,18 @@ import { resetDealGroups } from "./utils/deal.util.js";
 import { sendMail } from "./services/mail.service.js";
 import functions = require("firebase-functions");
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+exports.myDealzScraperTEST = functions.https.onCall(async (data: string) => { // For testing
+  if (data === process.env.TEST_SECRET) {
+    functions.logger.info("Job started onCall.");
+    const users: User[] = await getUsers();
+    main(users);
+    return users;
+  }
+  return "Unauthorized. Please use correct key!"
+});
 
 exports.myDealzScraper = functions
   // .https.onCall(async (data: any) => { // For testing local via npm run shell
@@ -14,11 +26,11 @@ exports.myDealzScraper = functions
   .schedule('0 18 * * *') // Run at 18:00 https://crontab.guru/#0_18_*_*_*
   .timeZone('Europe/Berlin') // specify the timezone for the schedule
   .onRun(async (context: any) => {
-    functions.logger.info("Job started.");
+    functions.logger.info("Job started on schedule.");
     const users: User[] = await getUsers();
     main(users);
     return users;
-  })
+  });
 
 const main = async (users: User[]) => {
   // Get deals

@@ -1,12 +1,12 @@
 
 import async = require('async');
 import nodemailer = require("nodemailer");
-import * as dotenv from 'dotenv';
 import { MailOptions, MailOptionsBuilder } from "../models/mailOption.model.js";
 import { DealGroup } from "../models/dealGroup.model.js";
 import functions = require("firebase-functions");
 import { User } from '../models/user.model.js';
 
+import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const buildMailOptions = (mailTo: string, dealGroup: DealGroup): MailOptions => {
