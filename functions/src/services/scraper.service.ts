@@ -14,7 +14,7 @@ export const startScrapeDealGroups = async (dealGroupTitles: string[]): Promise<
             functions.logger.info(`No deals scraped - ${url}`);
             return null;
         }
-
+        functions.logger.info(`Scraped ${scrapedDeals.length} deals in deal group ${dealGroupTitle}`);
         return new DealGroupBuilder()
             .setTitle(dealGroupTitle)
             .setDeals(scrapedDeals)

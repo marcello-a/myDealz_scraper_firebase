@@ -28,6 +28,7 @@ exports.myDealzScraper = functions
   .onRun(async (context: any) => {
     functions.logger.info("Job started on schedule.");
     const users: User[] = await getUsers();
+    functions.logger.info(`Got ${users.length} users. Start main routine.`);
     main(users);
     return users;
   });
@@ -41,7 +42,7 @@ const main = async (users: User[]) => {
   users.forEach((user: User) => {
     const checkForDuplicates: boolean = resetDealGroups();
     user.dealGroups = mapDealGroupToUser(user, dealGroupsWithoutHTML, checkForDuplicates);
-
+    functions.logger.info(`Got all information from User ${user.id}. Send mail.`);
     sendMail(user);
   });
 

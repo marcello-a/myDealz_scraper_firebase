@@ -2,6 +2,9 @@
 builded a webscraper for mydealz. 
 
 # How to
+## Deploy to firebase
+ `firebase deploy --only functions`
+ 
 
 ## Test Firebase
 > Node version 16 required
