@@ -1,0 +1,1 @@
+export const MAX_EXPIRED_DEALS_IN_A_ROW = 5;

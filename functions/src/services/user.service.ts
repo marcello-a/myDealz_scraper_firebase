@@ -14,8 +14,8 @@ export const joinUserDealGroups = (users: User[]): string[] => {
     return uniqueDealGroups;
 }
 
-export const mapDealGroupToUser = (user: User, scrapedDealGroups: DealGroup[], checkForDuplicates: boolean): DealGroup[] => {
-    functions.logger.info(`mapDealGroupToUser for user ${user.id} all scraped deal groups ${scrapedDealGroups.length}. Check for duplicates? -> ${checkForDuplicates}`);
+export const mapDealGroupToUser = (user: User, scrapedDealGroups: DealGroup[], resetUserDeals: boolean): DealGroup[] => {
+    functions.logger.info(`mapDealGroupToUser for user ${user.id} all scraped deal groups ${scrapedDealGroups.length}. Check for duplicates? -> ${resetUserDeals}`);
     const userDealGroups: DealGroup[] = []
     user.intrestedGroups.forEach((intrestedGroup) => {
         const userScrapedDealGroup = scrapedDealGroups.find(
@@ -23,7 +23,7 @@ export const mapDealGroupToUser = (user: User, scrapedDealGroups: DealGroup[], c
         );
 
         if (userScrapedDealGroup) {
-            if (checkForDuplicates) {
+            if (resetUserDeals === false) {
                 const userOldDealGroup = user.dealGroups.find(oldGroup => oldGroup.title === intrestedGroup);
                 if (userOldDealGroup) {
                     userScrapedDealGroup.deals = checkForDuplicateDeals(userScrapedDealGroup.deals, userOldDealGroup.deals);

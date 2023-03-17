@@ -19,37 +19,37 @@ export const buildMailOptions = (mailTo: string, dealGroup: DealGroup): MailOpti
   throw Error("Please set in your .env file the process.env.MAIL_USER")
 }
 
-export const useNodemailer = (mailOptions: MailOptions): void => {
+export const useNodemailer = async (mailOptions: MailOptions): Promise<void> => {
   const transporter = nodemailer.createTransport({
     pool: true,
     maxConnections: 1,
     host: 'mail.gmx.net',
     port: 587,
+    tls: { rejectUnauthorized: false },
     secure: false,
     auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_SECRET
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     },
   });
 
-  const emailQueue = async.queue((mailOptions: MailOptions, callback) => {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        functions.logger.error('########## ERROR INFO ##########You may have to login on www.gmx.de and verify your phone number and change the password!########## ERROR INFO ##########');
-        functions.logger.error(error);
-      } else {
-        functions.logger.info("Email sent: " + info.response);
-      }
-      callback(error);
-    });
+  const emailQueue = async.queue(async (mailOptions: MailOptions) => {
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      functions.logger.info("Email sent: " + info.response);
+    } catch (error) {
+      functions.logger.error('########## ERROR INFO ##########You may have to login on www.gmx.de and verify your phone number and change the password!########## ERROR INFO ##########');
+      functions.logger.error(error);
+    }
   }, 1);
 
-  emailQueue.push(mailOptions);
+  await emailQueue.push(mailOptions);
 }
 
-export const sendMail = (user: User): void => {
-  user.dealGroups.forEach((dealGroup) => {
+
+export const sendMail = async (user: User): Promise<void> => {
+  for (const dealGroup of user.dealGroups) {
     const mailOptions: MailOptions = buildMailOptions(user.recipient, dealGroup);
-    useNodemailer(mailOptions);
-  });
+    await useNodemailer(mailOptions);
+  }
 }

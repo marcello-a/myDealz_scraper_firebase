@@ -3,8 +3,7 @@ import { Deal, DealBuilder, DealMetaData } from "../models/deal.model.js";
 import axios from "axios";
 import cheerio = require("cheerio");
 import functions = require("firebase-functions");
-
-const MAX_EXPIRED_DEALS_IN_A_ROW = 5;
+import { MAX_EXPIRED_DEALS_IN_A_ROW } from "../config/expiredDeals.js";
 
 const extractNumberFromString = (str: string): number | null => {
     if (str.indexOf('Gratis') !== -1) {

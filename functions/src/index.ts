@@ -8,8 +8,11 @@ import { sendMail } from "./services/mail.service.js";
 import functions = require("firebase-functions");
 
 import * as dotenv from 'dotenv';
+import { SCHEDULE, TIMEZONE } from "./config/schedule.js";
+import { deleteOnWeekday } from "./config/deleteOnWeekday.js";
 dotenv.config();
 
+// Secured test method
 exports.myDealzScraperTEST = functions.https.onCall(async (data: string) => { // For testing
   if (data === process.env.TEST_SECRET) {
     functions.logger.info("Job started onCall.");
@@ -20,11 +23,12 @@ exports.myDealzScraperTEST = functions.https.onCall(async (data: string) => { //
   return "Unauthorized. Please use correct key!"
 });
 
+// Scheduled triggerd function
 exports.myDealzScraper = functions
-  // .https.onCall(async (data: any) => { // For testing local via npm run shell
+  .region('europe-west3')
   .pubsub
-  .schedule('0 18 * * *') // Run at 18:00 https://crontab.guru/#0_18_*_*_*
-  .timeZone('Europe/Berlin') // specify the timezone for the schedule
+  .schedule(SCHEDULE)
+  .timeZone(TIMEZONE)
   .onRun(async (context: any) => {
     functions.logger.info("Job started on schedule.");
     const users: User[] = await getUsers();
@@ -39,12 +43,12 @@ const main = async (users: User[]) => {
   const dealGroupsWithoutHTML: DealGroup[] = await startScrapeDealGroups(scrapeThisDealGroups);
 
   // Map deals to user and send mails
-  users.forEach((user: User) => {
-    const checkForDuplicates: boolean = resetDealGroups();
-    user.dealGroups = mapDealGroupToUser(user, dealGroupsWithoutHTML, checkForDuplicates);
+  for (const user of users) {
+    const resetUserDeals: boolean = resetDealGroups(deleteOnWeekday);
+    user.dealGroups = mapDealGroupToUser(user, dealGroupsWithoutHTML, resetUserDeals);
     functions.logger.info(`Got all information from User ${user.id}. Send mail.`);
-    sendMail(user);
-  });
+    await sendMail(user);
+  }
 
   // Update database
   const result = await saveUsers(users);

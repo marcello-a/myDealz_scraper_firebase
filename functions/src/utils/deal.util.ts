@@ -17,15 +17,16 @@ import functions = require("firebase-functions");
  * 6: saturday
  * @param weekday DEFAULT sunday
  */
-export const resetDealGroups = (weekday?: number): boolean => {
-    functions.logger.info(`Delete files on week day (${weekday ? weekday : '0: Sunday'})...`);
+export const resetDealGroups = (weekday: number): boolean => {
+    if (weekday) {
+        functions.logger.info(`Delete files on week day (${weekday ? weekday : '0: Sunday'})...`);
 
-    const deleteOnThisDay: number = weekday == null ? 0 : weekday;
-    const today = new Date();
+        const deleteOnThisDay: number = weekday == null ? 0 : weekday;
+        const today = new Date();
 
-    if (today.getDay() === deleteOnThisDay) {
-        return true;
-
+        if (today.getDay() === deleteOnThisDay) {
+            return true;
+        }
     }
     return false;
 }
