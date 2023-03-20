@@ -174,7 +174,7 @@ Just do a fork and make a pull request and we can discuss and you can contribute
 
 ## AP 6 Keywords
 - [ ] Search for specified keywords
-    - Wintersale and so an
+    - Wintersale and so on
     - Send mail which product groups are handy to buy now
 
 ## AP 7 READ ME
