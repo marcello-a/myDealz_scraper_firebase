@@ -1,6 +1,6 @@
 {
   "name": "mydealz_scraper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Webscraper to get deal arlarm of specific items as email.",
   "scripts": {
     "build": "tsc",

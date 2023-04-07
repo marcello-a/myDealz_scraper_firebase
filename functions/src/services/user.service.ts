@@ -33,19 +33,21 @@ export const mapDealGroupToUser = (user: User, scrapedDealGroups: DealGroup[], r
         const userScrapedDealGroup = scrapedDealGroups.find(
             scrapedGroup => scrapedGroup.title === intrestedGroup
         );
-
         if (userScrapedDealGroup) {
-            if (resetUserDeals === false) {
-                const userOldDealGroup = user.dealGroups.find(oldGroup => oldGroup.title === intrestedGroup);
-                if (userOldDealGroup) {
-                    userScrapedDealGroup.deals = checkForDuplicateDeals(userScrapedDealGroup.deals, userOldDealGroup.deals);
-                    if (onlyUrgendts()) {
-                        userScrapedDealGroup.deals = getOnlyUrgendts(userScrapedDealGroup.deals);
+            if (onlyUrgendts()) { // can result empty userScrapedDealGroup
+                userScrapedDealGroup.deals = getOnlyUrgendts(userScrapedDealGroup.deals);
+                functions.logger.info(`userScrapedDealGroup.deals ${userScrapedDealGroup.deals.length} .`);
+            }
+            if (userScrapedDealGroup.deals.length > 0) {
+                if (resetUserDeals === false) {
+                    const userOldDealGroup = user.dealGroups.find(oldGroup => oldGroup.title === intrestedGroup);
+                    if (userOldDealGroup) {
+                        userScrapedDealGroup.deals = checkForDuplicateDeals(userScrapedDealGroup.deals, userOldDealGroup.deals);
                     }
                 }
+                const updatedDealGroup = buildDealGroup(userScrapedDealGroup.title, userScrapedDealGroup.deals);
+                userDealGroups.push(updatedDealGroup);
             }
-            const updatedDealGroup = buildDealGroup(userScrapedDealGroup.title, userScrapedDealGroup.deals);
-            userDealGroups.push(updatedDealGroup);
         }
     });
     functions.logger.info(`Mapped from user ${user.id} all ${user.intrestedGroups.length} intrestgroups.`);
