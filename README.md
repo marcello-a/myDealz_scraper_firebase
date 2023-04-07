@@ -183,6 +183,9 @@ Just do a fork and make a pull request and we can discuss and you can contribute
 - [x] delete sensible data
 - [x] make git project public
 
+# AP NEXT
+- [x] send all on sunday morning and only urgent on weekday
+
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
