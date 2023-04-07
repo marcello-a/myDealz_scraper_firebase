@@ -1,4 +1,5 @@
 import { tableStyle } from "../styles/tableStyle.js";
+import { isToday, isTomorrow } from "../utils/deal.util.js";
 import { Deal, DealMetaData } from "./deal.model.js";
 
 /**
@@ -40,31 +41,12 @@ class HtmlTableBuilder {
         this.htmlTableTagBeginSet = true;
     }
 
-    private isSameDay(date1: Date, date2: Date): boolean {
-        return (
-            date1.getFullYear() === date2.getFullYear() &&
-            date1.getMonth() === date2.getMonth() &&
-            date1.getDate() === date2.getDate()
-        );
-    }
-
-    private isToday(date: Date): boolean {
-        const today = new Date();
-        return this.isSameDay(date, today);
-    }
-
-    private isTomorrow(date: Date): boolean {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        return this.isSameDay(date, tomorrow);
-    }
-
     private isDealTimesensitive(deal: Deal): string {
         if (deal.meta?.expires != null) {
             const date = new Date(deal.meta.expires);
-            if (this.isToday(date)) {
+            if (isToday(date)) {
                 return 'background-color: rgba(187, 63, 63, 0.3);'
-            } if (this.isTomorrow(date)) {
+            } if (isTomorrow(date)) {
                 return 'background-color: rgba(76, 175, 80, 0.3);'
             }
         }
@@ -92,7 +74,7 @@ class HtmlTableBuilder {
                 if (value != null) {
                     dealRow += `<div style="padding: 4px; width: 100%; text-align: center;">`;
                     if (value instanceof Date) {
-                        dealRow += `${key}: <b>${this.isToday(value) ? '<b>Today</b>' : this.isTomorrow(value) ? '<b>Tomorrow</b>' : value.toLocaleDateString('de-DE')}</b>`;
+                        dealRow += `${key}: <b>${isToday(value) ? '<b>Today</b>' : isTomorrow(value) ? '<b>Tomorrow</b>' : value.toLocaleDateString('de-DE')}</b>`;
                     } else {
                         dealRow += `${key}: <b>${value}</b>`;
                     }

@@ -71,3 +71,36 @@ export const checkForDuplicateDeals = (scrapedDeals: Deal[], oldDeals: Deal[]): 
     functions.logger.info(`Found ${newDeals.length} new deals.`);
     return newDeals;
 }
+
+const isSameDay = (date1: Date, date2: Date): boolean => {
+    return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+    );
+}
+
+export const isToday = (date: Date): boolean => {
+    const today = new Date();
+    return isSameDay(date, today);
+}
+
+export const isTomorrow = (date: Date): boolean => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return isSameDay(date, tomorrow);
+}
+
+export const isDealTimesensitive = (deal: Deal): boolean => {
+    if (deal.meta?.expires != null) {
+        const date = new Date(deal.meta.expires);
+        if (isToday(date) || isTomorrow(date)) {
+            return true;
+        }
+    }
+    return false;;
+}
+
+export const getOnlyUrgendts = (deals: Deal[]): Deal[] => {
+    return deals.filter((deal: Deal) => isDealTimesensitive(deal));
+};

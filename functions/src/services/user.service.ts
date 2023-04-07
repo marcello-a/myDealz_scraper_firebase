@@ -1,6 +1,7 @@
+import { SEND_ONLY_URGENT_ON_WEEKDAYS } from "../config/schedule.js";
 import { DealGroup } from "../models/dealGroup.model.js";
 import { User } from "../models/user.model.js";
-import { buildDealGroup, checkForDuplicateDeals } from "../utils/deal.util.js";
+import { buildDealGroup, checkForDuplicateDeals, getOnlyUrgendts } from "../utils/deal.util.js";
 import functions = require("firebase-functions");
 
 export const joinUserDealGroups = (users: User[]): string[] => {
@@ -13,6 +14,17 @@ export const joinUserDealGroups = (users: User[]): string[] => {
     functions.logger.info(`joinUserDealGroups -> ${uniqueDealGroups.length} unique deal groups found.`);
     return uniqueDealGroups;
 }
+
+const onlyUrgendts = () => {
+    if (SEND_ONLY_URGENT_ON_WEEKDAYS) {
+        const date = new Date()
+        const sunday = 0;
+        if (date.getDay() === sunday) {
+            return false;
+        }
+    }
+    return true;
+};
 
 export const mapDealGroupToUser = (user: User, scrapedDealGroups: DealGroup[], resetUserDeals: boolean): DealGroup[] => {
     functions.logger.info(`mapDealGroupToUser for user ${user.id} all scraped deal groups ${scrapedDealGroups.length}. Check for duplicates? -> ${resetUserDeals}`);
@@ -27,6 +39,9 @@ export const mapDealGroupToUser = (user: User, scrapedDealGroups: DealGroup[], r
                 const userOldDealGroup = user.dealGroups.find(oldGroup => oldGroup.title === intrestedGroup);
                 if (userOldDealGroup) {
                     userScrapedDealGroup.deals = checkForDuplicateDeals(userScrapedDealGroup.deals, userOldDealGroup.deals);
+                    if (onlyUrgendts()) {
+                        userScrapedDealGroup.deals = getOnlyUrgendts(userScrapedDealGroup.deals);
+                    }
                 }
             }
             const updatedDealGroup = buildDealGroup(userScrapedDealGroup.title, userScrapedDealGroup.deals);
