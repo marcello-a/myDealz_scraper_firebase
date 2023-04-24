@@ -10,13 +10,13 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const buildMailOptions = (mailTo: string, dealGroup: DealGroup): MailOptions => {
-  if (process.env.MAIL_USER) {
+  if (process.env.EMAIL_USER) {
     return new MailOptionsBuilder(dealGroup)
-      .from(process.env.MAIL_USER)
+      .from(process.env.EMAIL_USER)
       .to(mailTo)
       .build();
   }
-  throw Error("Please set in your .env file the process.env.MAIL_USER")
+  throw Error("Please set in your .env file the process.env.EMAIL_USER")
 }
 
 export const useNodemailer = async (mailOptions: MailOptions): Promise<void> => {
